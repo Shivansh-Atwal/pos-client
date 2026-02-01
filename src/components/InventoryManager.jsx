@@ -3,7 +3,7 @@ import { Search, Package, AlertTriangle } from 'lucide-react'
 import '../styles/InventoryManager.css'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE_URL = 'http://localhost:5000'
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
 function InventoryManager() {
   const { user } = useAuth()

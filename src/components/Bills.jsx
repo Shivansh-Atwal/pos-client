@@ -42,7 +42,7 @@ function Bills() {
       })
 
       const response = await fetch(
-        `http://localhost:5000/api/bills/all?${queryParams}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/bills/all?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ function Bills() {
     try {
       const token = localStorage.getItem('authToken')
       const response = await fetch(
-        'http://localhost:5000/api/bills/export/csv',
+        `${import.meta.env.VITE_API_BASE_URL}/api/bills/export/csv`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -3,7 +3,7 @@ import { Plus, Edit2, Trash2, Search } from 'lucide-react'
 import '../styles/CustomerManager.css'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE_URL = 'http://localhost:5000'
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
 function CustomerManager() {
   const { user } = useAuth()

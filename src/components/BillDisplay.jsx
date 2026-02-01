@@ -56,7 +56,7 @@ function BillDisplay({ billItems, total, shopName, shopAddress, gstNumber, custo
 
       // Send to backend for WhatsApp integration
       const token = localStorage.getItem('authToken')
-      const response = await fetch('http://localhost:5000/api/bills/send-whatsapp', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bills/send-whatsapp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

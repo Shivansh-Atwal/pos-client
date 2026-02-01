@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { Scan, X, Plus, Loader, AlertCircle } from "lucide-react"
 import { BrowserMultiFormatReader } from "@zxing/browser"
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000"
+const API_BASE = `${import.meta.env.VITE_API_BASE_URL}` || "http://localhost:5000"
 
 function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" }) {
   const videoRef = useRef(null)
