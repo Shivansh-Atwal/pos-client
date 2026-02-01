@@ -1,0 +1,685 @@
+/* ========================================
+   Receipt-Style Authentication Pages
+   Bill/POS Receipt Design
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding: 16px;
+  font-family: 'Courier New', 'Lucida Console', monospace;
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 0;
+  border: 2px dashed #333;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.auth-card.signup-card {
+  max-width: 320px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Receipt Header Section */
+.auth-card h1 {
+  text-align: center;
+  color: #000;
+  margin: 0;
+  padding: 16px 16px 8px;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 2px dashed #999;
+  font-family: 'Courier New', monospace;
+}
+
+.auth-card p {
+  text-align: center;
+  color: #666;
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 11px;
+  line-height: 1.4;
+  border-bottom: 1px dashed #ccc;
+}
+
+/* Receipt Content Section */
+form {
+  padding: 16px;
+}
+
+/* Error Message - Receipt Style */
+.error-message {
+  background-color: #fff5f5;
+  color: #8B0000;
+  padding: 10px 12px;
+  border: 1px dashed #8B0000;
+  border-radius: 2px;
+  margin-bottom: 16px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+/* Form Rows - Receipt Items */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+}
+
+/* Form Labels - Receipt Style */
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+  font-weight: bold;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Form Inputs - Receipt Style */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  background-color: #ffffff;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder {
+  color: #aaa;
+  font-size: 11px;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #666;
+  background-color: #fafafa;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border: 1px solid #333;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #ddd;
+}
+
+/* Receipt Footer - Submit Button */
+.auth-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Courier New', monospace;
+}
+
+.auth-btn:hover:not(:disabled) {
+  background-color: #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.auth-btn:active:not(:disabled) {
+  background-color: #1a1a1a;
+}
+
+.auth-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Receipt Footer Section - Links */
+.auth-footer {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px dashed #999;
+  color: #666;
+  font-size: 11px;
+  line-height: 1.6;
+  font-family: 'Courier New', monospace;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  font-size: 11px;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  font-family: 'Courier New', monospace;
+}
+
+.link-btn:hover {
+  color: #333;
+}
+
+.link-btn:active {
+  color: #000;
+}
+
+/* ========================================
+   Mobile Responsive Design
+   ======================================== */
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 12px;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    border-width: 2px;
+  }
+
+  .auth-card h1 {
+    font-size: 16px;
+    padding: 14px 14px 8px;
+  }
+
+  .auth-card p {
+    padding: 8px 14px;
+    font-size: 10px;
+  }
+
+  form {
+    padding: 14px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 9px 9px;
+    font-size: 13px;
+  }
+
+  .auth-btn {
+    padding: 10px;
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .error-message {
+    font-size: 10px;
+    padding: 9px 11px;
+    margin-bottom: 14px;
+  }
+
+  .auth-footer {
+    font-size: 10px;
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+
+  .link-btn {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-card {
+    border-width: 1px;
+  }
+
+  .auth-card h1 {
+    font-size: 14px;
+    padding: 12px 12px 6px;
+  }
+
+  .auth-card p {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  form {
+    padding: 12px;
+  }
+
+  .form-group label {
+    font-size: 8px;
+    margin-bottom: 2px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px 8px;
+    font-size: 12px;
+  }
+
+  .auth-btn {
+    padding: 9px;
+    font-size: 10px;
+    margin-top: 5px;
+  }
+
+  .error-message {
+    font-size: 9px;
+    padding: 8px 10px;
+  }
+
+  .auth-footer {
+    font-size: 9px;
+    margin-top: 12px;
+    padding-top: 8px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .auth-container {
+    display: none;
+  }
+}
+
+/* ========================================
+   PROFILE MODAL STYLES
+   ======================================== */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Modal Container */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Profile Modal Specific */
+.profile-modal {
+  max-width: 500px;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 24px;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1f8dd6;
+}
+
+/* Form Group */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #1f8dd6;
+  box-shadow: 0 0 0 3px rgba(31, 141, 214, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Form Row (for side-by-side fields) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Read-only Info */
+.read-only-info {
+  background-color: #f5f7fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+  font-size: 12px;
+}
+
+.info-value {
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Messages */
+.success-message,
+.error-message {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: #1f8dd6;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #1565a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 141, 214, 0.3);
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #d0d0d0;
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Logout Section */
+.logout-section {
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0 0 16px 0;
+}
+
+.logout-btn-profile {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn-profile:hover {
+  background-color: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.logout-btn-profile:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+    border-radius: 8px;
+  }
+
+  .profile-modal {
+    max-width: 100%;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+}
+
