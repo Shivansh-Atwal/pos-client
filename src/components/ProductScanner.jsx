@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react"
 import { Scan, X, Plus, Loader, AlertCircle } from "lucide-react"
 import { BrowserMultiFormatReader } from "@zxing/browser"
 
-const API_BASE = `${import.meta.env.VITE_API_BASE_URL}` || "http://localhost:5000"
+const API_BASE =
+  `${import.meta.env.VITE_API_BASE_URL}` || "http://localhost:5000"
 
 function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" }) {
   const videoRef = useRef(null)
@@ -28,7 +29,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   })
 
   // ===============================
-  // INIT SCANNER
+  // INIT SCANNER (BACK CAMERA LOGIC)
   // ===============================
   useEffect(() => {
     if (!scanning) return
@@ -40,6 +41,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
     const initScanner = async () => {
       try {
         const codeReader = new BrowserMultiFormatReader()
+
         const videoInputDevices =
           await BrowserMultiFormatReader.listVideoInputDevices()
 
@@ -47,10 +49,29 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
           throw new Error("No camera devices found")
         }
 
-        console.log("Starting barcode scanning with ZXing...")
+        // ✅ Prefer back / rear / environment camera
+        let selectedDevice = videoInputDevices[0]
+
+        for (const device of videoInputDevices) {
+          const label = device.label.toLowerCase()
+          if (
+            label.includes("back") ||
+            label.includes("rear") ||
+            label.includes("environment")
+          ) {
+            selectedDevice = device
+            break
+          }
+        }
+
+        console.log(
+          "Starting barcode scanning with camera:",
+          selectedDevice.label || selectedDevice.deviceId
+        )
+
         codeReader
           .decodeFromVideoDevice(
-            videoInputDevices[0].deviceId,
+            selectedDevice.deviceId,
             videoRef.current,
             (result, err, controls) => {
               controlsRef.current = controls
@@ -76,8 +97,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
 
                 scanningRef.current = false
                 controls.stop()
-                
-                // Auto-search product after barcode detected
+
                 setTimeout(() => {
                   handleAutoSearch(barcode, result.getBarcodeFormat())
                 }, 100)
@@ -151,7 +171,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   }
 
   // ===============================
-  // AUTO SEARCH & ADD PRODUCT
+  // AUTO SEARCH
   // ===============================
   const handleAutoSearch = async (barcode, format) => {
     setApiLoading(true)
@@ -163,7 +183,6 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
       const data = await res.json()
 
       if (data.success && data.data) {
-        // Auto-add found product to bill
         onProductFound({
           id: data.data._id,
           name: data.data.name,
@@ -176,11 +195,9 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
         resetState()
         setScanning(false)
       } else {
-        // Product not found, pass barcode to parent component
         if (onNewBarcodeScanned) {
           onNewBarcodeScanned(barcode)
         } else {
-          // Fallback to showing manual form in scanner
           setDetectedBarcode({ barcode, format })
           setShowManualForm(true)
         }
@@ -188,11 +205,9 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
       }
     } catch (err) {
       console.error("Search error:", err)
-      // Pass barcode to parent component on error
       if (onNewBarcodeScanned) {
-        onNewBarcodeScanned(detectedBarcode?.barcode || "")
+        onNewBarcodeScanned(barcode)
       } else {
-        // Fallback to showing manual form in scanner
         setDetectedBarcode({ barcode, format })
         setShowManualForm(true)
       }
@@ -203,87 +218,16 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   }
 
   // ===============================
-  // SEARCH PRODUCT (DEPRECATED - use handleAutoSearch instead)
-  // ===============================
-  const searchProduct = async () => {
-    if (!detectedBarcode?.barcode){
-      alert("No barcode detected")
-      return
-    }
-    // Call the auto search handler
-    await handleAutoSearch(detectedBarcode.barcode, detectedBarcode.format)
-  }
-
-  // ===============================
-  // ADD PRODUCT (register to inventory and add to bill)\n  // ===============================
-  const addProduct = async (e) => {
-    e.preventDefault()
-
-    if (!formData.name || !formData.price || !formData.barcode) {
-      alert("Required fields missing")
-      return
-    }
-
-    setApiLoading(true)
-    try {
-      // Register product to inventory
-      const inventoryRes = await fetch(`${API_BASE}/api/inventory/register-barcode`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          barcode: formData.barcode,
-          name: formData.name,
-          price: Number(formData.price),
-          category: formData.category,
-          brand: formData.brand || "",
-          quantity: parseInt(formData.quantity) || 1,
-          minStock: 10,
-          location: formData.location,
-          warehouse: formData.warehouse,
-        }),
-      })
-
-      const inventoryData = await inventoryRes.json()
-
-      if (inventoryData.success) {
-        const productData = inventoryData.data.product
-        // Auto-add new product to bill
-        onProductFound({
-          id: productData._id,
-          name: productData.name,
-          price: productData.price,
-          category: productData.category,
-          brand: productData.brand || "",
-          barcode: productData.barcode,
-          source: "registered",
-        })
-        resetState()
-      } else {
-        alert(inventoryData.error || "Failed to register product")
-      }
-    } catch (err) {
-      console.error("Error adding product:", err)
-      alert("Failed to add product")
-    } finally {
-      setApiLoading(false)
-    }
-  }
-
-  // ===============================
-  // UI RENDERING
+  // UI
   // ===============================
   if (!scanning && !detectedBarcode && !showManualForm) {
     return (
       <div className="scanner-container">
         <div className="scanner-buttons">
-          <button onClick={startScan} title="Scan barcode with camera" className="scanner-btn">
+          <button onClick={startScan} className="scanner-btn">
             <Scan size={20} />
             <span>Scan</span>
           </button>
-          {/* <button onClick={() => setShowManualForm(true)} title="Enter product manually" className="scanner-btn">
-            <Plus size={20} />
-            <span>Manual</span>
-          </button> */}
         </div>
       </div>
     )
@@ -303,15 +247,15 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
           <div className="scanner-video-container">
             <video
               ref={videoRef}
+              autoPlay
+              muted
+              playsInline
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
                 background: "#000",
               }}
-              autoPlay
-              muted
-              playsInline
             />
 
             {scannerLoading && (
@@ -331,7 +275,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
             {!scannerLoading && !error && (
               <div className="scanning-hint">
                 <p>Point camera at barcode</p>
-                <p className="hint-text">Position barcode in center of frame</p>
+                <p className="hint-text">Position barcode in center</p>
               </div>
             )}
           </div>
@@ -339,32 +283,6 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
           <button className="stop-btn" onClick={stopScan}>
             Stop Scanning
           </button>
-        </div>
-      </div>
-    )
-  }
-
-  if (detectedBarcode && !showManualForm) {
-    return (
-      <div className="scanner-modal">
-        <div className="scanner-overlay">
-          <h3>✓ Barcode Detected</h3>
-          <div className="barcode-display">
-            <p className="barcode-value">{detectedBarcode.barcode}</p>
-            <p className="barcode-format">{detectedBarcode.format || "Unknown"}</p>
-          </div>
-
-          <div className="button-group">
-            <button onClick={searchProduct} disabled={apiLoading} className="search-btn">
-              {apiLoading ? "Searching..." : "Search Product"}
-            </button>
-            <button onClick={() => setScanning(true)} className="rescan-btn">
-              Scan Again
-            </button>
-            <button onClick={() => setShowManualForm(true)} className="manual-btn">
-              Manual Entry
-            </button>
-          </div>
         </div>
       </div>
     )
