@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Plus, Trash2, Search, X, Eye, EyeOff, Package } from 'lucide-react'
 import ProductScanner from './ProductScanner'
 import BillItems from './BillItems'
@@ -18,6 +18,7 @@ function BillingSystem() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showBillPreview, setShowBillPreview] = useState(true)
   const [showManualForm, setShowManualForm] = useState(false)
+  const [products,setProducts] = useState([])
   const [manualProduct, setManualProduct] = useState({
     barcode: '',
     name: '',
@@ -26,16 +27,44 @@ function BillingSystem() {
   const [scannedBarcode, setScannedBarcode] = useState(null)
 
   // Sample products database
-  const products = [
-    { id: 1, name: 'Lays - Classic Salt', price: 20, category: 'Snacks' },
-    { id: 2, name: 'Sprite 600ml', price: 40, category: 'Beverages' },
-    { id: 3, name: 'Biscuits Pack', price: 30, category: 'Snacks' },
-    { id: 4, name: 'Milk 500ml', price: 25, category: 'Dairy' },
-    { id: 5, name: 'Bread', price: 35, category: 'Bakery' },
-    { id: 6, name: 'Eggs (6pc)', price: 45, category: 'Dairy' },
-    { id: 7, name: 'Butter 200g', price: 60, category: 'Dairy' },
-    { id: 8, name: 'Chocolate Bar', price: 50, category: 'Snacks' },
-  ]
+  const getTopInventoryProducts = async () => {
+  try {
+
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/products?limit=6`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    if (response.ok) {
+
+      const data = await response.json()
+
+      const formattedProducts = data.data.map((item) => ({
+        id: item._id,
+        name: item.name,
+        price: item.price,
+        barcode: item.barcode,
+        category: item.category,
+      }))
+
+      setProducts(formattedProducts)
+      // console.log('Formatted products:', formattedProducts)
+    }
+
+  } catch (err) {
+    console.error('Error fetching inventory products:', err)
+  }
+}
+
+    useEffect(() => {
+      getTopInventoryProducts()
+    }, [])
 
 
   const addItem = (product) => {
@@ -64,6 +93,9 @@ function BillingSystem() {
   const removeItem = (itemId) => {
     setBillItems(billItems.filter(item => item.id !== itemId))
   }
+
+
+
 
   const updateQuantity = (itemId, quantity) => {
     if (quantity <= 0) {
@@ -423,33 +455,72 @@ function BillingSystem() {
 
           {/* Products Table */}
           <div className="products-table-wrapper">
-            <table className="products-table">
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Price</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map(product => (
-                  <tr key={product.id}>
-                    <td className="product-name">{product.name}</td>
-                    <td className="product-price">₹{product.price}</td>
-                    <td className="product-action">
-                      <button
-                        className="add-btn"
-                        onClick={() => addItem(product)}
-                      >
-                        <Plus size={16} />
-                        Add
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+  <table className="products-table">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {products.length > 0 ? (
+        products.map((product) => {
+
+          // support both formatted and raw inventory data
+          const id = product.id || product._id || product.productId?._id
+
+          const name =
+            product.name ||
+            product.productId?.name ||
+            'Unknown Product'
+
+          const price =
+            product.price ||
+            product.productId?.price ||
+            0
+
+          return (
+            <tr key={id}>
+              <td className="product-name">
+                {name}
+              </td>
+
+              <td className="product-price">
+                ₹{price}
+              </td>
+
+              <td className="product-action">
+                <button
+                  className="add-btn"
+                  onClick={() =>
+                    addItem({
+                      ...product,
+                      id,
+                      name,
+                      price,
+                    })
+                  }
+                >
+                  <Plus size={16} />
+                  Add
+                </button>
+              </td>
+            </tr>
+          )
+        })
+      ) : (
+        <tr>
+          <td colSpan="3" style={{ textAlign: 'center' }}>
+            No products available
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
 
           {/* Check Inventory Button */}
           <div className="inventory-button-section">

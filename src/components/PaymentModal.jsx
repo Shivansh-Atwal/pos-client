@@ -14,7 +14,6 @@ function PaymentModal({ total, billItems = [], onClose, onComplete }) {
   // Customer Details
   const [customerName, setCustomerName] = useState('')
   const [customerMobile, setCustomerMobile] = useState('')
-  const [customerEmail, setCustomerEmail] = useState('')
 
   const discountAmount = (parseFloat(discount) || 0)
   const finalTotal = Math.max(0, total - discountAmount)
@@ -53,7 +52,6 @@ function PaymentModal({ total, billItems = [], onClose, onComplete }) {
         // Customer Details
         customerName: customerName || 'Walk-in Customer',
         customerMobile: customerMobile || 'N/A',
-        customerEmail: customerEmail || '',
       }
 
       const billResponse = await fetch(`${API_BASE_URL}/api/bills`, {
@@ -133,15 +131,6 @@ function PaymentModal({ total, billItems = [], onClose, onComplete }) {
               />
             </div>
             
-            <div className="form-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                placeholder="Enter email (optional)"
-                value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-              />
-            </div>
           </div>
 
           {/* Amount Display */}

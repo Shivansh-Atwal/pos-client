@@ -4,7 +4,7 @@ import html2pdf from 'html2pdf.js'
 
 function BillDisplay({ billItems, total, shopName, shopAddress, gstNumber, customerName, customerMobile }) {
   const subtotal = total
-  const tax = total * 0.05
+  const tax = total * 0.01
   const grandTotal = subtotal + tax
   const billRef = useRef()
 
@@ -25,38 +25,51 @@ function BillDisplay({ billItems, total, shopName, shopAddress, gstNumber, custo
   }
 
   const handleSendWhatsApp = async () => {
-    if (!customerMobile) {
-      alert('Customer mobile number is required')
+  try {
+
+    // Step 1: Ask user for mobile number
+    let phoneNumber = prompt("Enter customer WhatsApp number:")
+
+    if (!phoneNumber) {
+      alert("Mobile number is required")
       return
     }
 
-    try {
-      const element = billRef.current
-      const opt = {
-        margin: 10,
-        filename: `bill_${Date.now()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      }
+    // Format number
+    if (!phoneNumber.startsWith("+91")) {
+      phoneNumber = `+91${phoneNumber}`
+    }
 
-      // Generate PDF
-      const pdf = html2pdf().set(opt).from(element)
-      
-      // Convert to base64
-      const pdfDataUrl = await new Promise(resolve => {
-        pdf.outputPdf(function(pdf) {
-          const data = pdf.internal.pages[0].getContext('2d')
-          resolve(data)
-        })
-      })
+    // Step 2: Generate PDF
+    const element = billRef.current
 
-      // Format phone number
-      const phoneNumber = customerMobile.startsWith('+') ? customerMobile : `+91${customerMobile}`
+    const opt = {
+      margin: 10,
+      filename: `bill_${Date.now()}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+    }
 
-      // Send to backend for WhatsApp integration
-      const token = localStorage.getItem('authToken')
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bills/send-whatsapp`, {
+    const pdfBlob = await html2pdf()
+      .set(opt)
+      .from(element)
+      .outputPdf('blob')
+
+    // Convert blob to base64
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(pdfBlob)
+      reader.onloadend = () => resolve(reader.result)
+    })
+
+
+    // Step 3: Send to backend
+    const token = localStorage.getItem('authToken')
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/bills/send-whatsapp`,
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,22 +77,32 @@ function BillDisplay({ billItems, total, shopName, shopAddress, gstNumber, custo
         },
         body: JSON.stringify({
           phoneNumber,
-          pdfBase64: pdfDataUrl,
+          pdfBase64: base64,
         }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        alert(`✅ Bill sent successfully to ${phoneNumber}`)
-      } else {
-        alert(`❌ Error: ${data.error || 'Failed to send bill'}`)
       }
-    } catch (error) {
-      console.error('Error sending bill:', error)
-      alert(`Error: ${error.message}`)
+    )
+
+    const data = await response.json()
+
+    if (response.ok) {
+
+      alert(`✅ Bill sent to ${phoneNumber}`)
+
+    } else {
+
+      alert(data.error || "Failed to send bill")
+
     }
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert("Error sending WhatsApp")
+
   }
+}
+
 
   if (billItems.length === 0) {
     return (
@@ -181,7 +204,7 @@ function BillDisplay({ billItems, total, shopName, shopAddress, gstNumber, custo
               <span className="total-value">₹{subtotal.toFixed(2)}</span>
             </div>
             <div className="total-row">
-              <span className="total-label">Tax (5%):</span>
+              <span className="total-label">Tax (1%):</span>
               <span className="total-value">₹{tax.toFixed(2)}</span>
             </div>
             <div className="total-row grand-total">

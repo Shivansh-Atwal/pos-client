@@ -16,13 +16,6 @@ function CustomerManager() {
   const [formData, setFormData] = useState({
     name: '',
     mobileNumber: '',
-    email: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    gstNumber: '',
-    notes: '',
   })
 
   useEffect(() => {
@@ -77,14 +70,7 @@ function CustomerManager() {
   const resetForm = () => {
     setFormData({
       name: '',
-      mobileNumber: '',
-      email: '',
-      address: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      gstNumber: '',
-      notes: '',
+      mobileNumber: ''
     })
     setEditingId(null)
     setShowForm(false)
@@ -220,86 +206,6 @@ function CustomerManager() {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>GST Number</label>
-                  <input
-                    type="text"
-                    name="gstNumber"
-                    value={formData.gstNumber}
-                    onChange={handleInputChange}
-                    placeholder="GST number"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="Street address"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    placeholder="City"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>State</label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    placeholder="State"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Zip Code</label>
-                  <input
-                    type="text"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleInputChange}
-                    placeholder="Zip code"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Notes</label>
-                <textarea
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleInputChange}
-                  placeholder="Additional notes"
-                  rows="3"
-                />
-              </div>
-
               <div className="form-actions">
                 <button type="submit" className="btn-submit">
                   {editingId ? 'Update Customer' : 'Add Customer'}
@@ -351,24 +257,6 @@ function CustomerManager() {
                     <span className="label">Mobile:</span>
                     <span className="value">{customer.mobileNumber}</span>
                   </div>
-                  {customer.email && (
-                    <div className="detail-row">
-                      <span className="label">Email:</span>
-                      <span className="value">{customer.email}</span>
-                    </div>
-                  )}
-                  {customer.address && (
-                    <div className="detail-row">
-                      <span className="label">Address:</span>
-                      <span className="value">{customer.address}</span>
-                    </div>
-                  )}
-                  {customer.gstNumber && (
-                    <div className="detail-row">
-                      <span className="label">GST:</span>
-                      <span className="value">{customer.gstNumber}</span>
-                    </div>
-                  )}
                 </div>
               </div>
             ))}

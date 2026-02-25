@@ -124,6 +124,78 @@ function InventoryManager() {
     }
   }
 
+  const handleDeleteSingle = async(itemId) =>{
+    const confirmed = window.confirm('Are you sure you want to delete this item? This action cannot be undone.')
+    if (confirmed) {
+      try {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE_URL}/api/products/${itemId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          // Update local inventory
+          const updatedInventory = inventory.filter(item => item._id !== itemId)
+          setInventory(updatedInventory)
+        }
+      } catch (error) {
+        console.error('Error deleting item:', error)
+      }
+    }
+  }
+
+  const handleDeleteAll = async () => {
+
+  const confirmed = window.confirm(
+    'Are you sure you want to delete ALL inventory items? This action cannot be undone.'
+  )
+
+  if (!confirmed) return
+
+  try {
+
+    const token = localStorage.getItem('authToken')
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/inventory`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    const data = await response.json()
+
+    if (response.ok) {
+
+      console.log('Deleted:', data.deletedCount)
+
+      // Clear UI inventory list
+      setInventory([])
+
+      alert('All inventory deleted successfully')
+
+    } else {
+
+      alert(data.error || 'Failed to delete inventory')
+
+    }
+
+  } catch (error) {
+
+    console.error('Error deleting inventory:', error)
+
+    alert('Server error while deleting inventory')
+
+  }
+}
+
 
   return (
     <div className="inventory-manager">
@@ -152,7 +224,7 @@ function InventoryManager() {
 
       {/* Search */}
       <div className="inv-search">
-        <Search size={18} />
+        <button onClick={() => handleDeleteAll()}>Delete All</button>
         <input
           type="text"
           placeholder="Search by product name or barcode..."
@@ -225,7 +297,7 @@ function InventoryManager() {
                           onClick={() => handleAdjustQuantity(item._id, item.stock - 1)}
                           disabled={adjusting === item._id || item.stock === 0}
                         >
-                          −
+                          -
                         </button>
                         <span className="qty-value-sm">{item.stock}</span>
                         <button
@@ -236,6 +308,9 @@ function InventoryManager() {
                           +
                         </button>
                       </div>
+                    </td>
+                    <td>
+                      <button onClick = {()=> handleDeleteSingle(item._id)}>Delete</button>
                     </td>
                     <td>
                       <span className={`status-badge ${status.class}`}>

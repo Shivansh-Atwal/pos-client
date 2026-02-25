@@ -9,6 +9,8 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   const videoRef = useRef(null)
   const scanningRef = useRef(false)
   const controlsRef = useRef(null)
+  const readerRef = useRef(null)
+  const streamRef = useRef(null)
 
   const [scanning, setScanning] = useState(false)
   const [scannerLoading, setScannerLoading] = useState(false)
@@ -41,63 +43,45 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
     const initScanner = async () => {
       try {
         const codeReader = new BrowserMultiFormatReader()
-
         const videoInputDevices =
           await BrowserMultiFormatReader.listVideoInputDevices()
 
-        if (videoInputDevices.length === 0) {
-          throw new Error("No camera devices found")
-        }
+    if (videoInputDevices.length === 0) {
+      throw new Error("No camera devices found")
+    }
 
-        // ✅ Prefer back / rear / environment camera
-        let selectedDevice = videoInputDevices[0]
-
-        for (const device of videoInputDevices) {
-          const label = device.label.toLowerCase()
-          if (
-            label.includes("back") ||
-            label.includes("rear") ||
-            label.includes("environment")
-          ) {
-            selectedDevice = device
-            break
-          }
-        }
-
-        console.log(
-          "Starting barcode scanning with camera:",
-          selectedDevice.label || selectedDevice.deviceId
-        )
-
+        console.log("Starting barcode scanning with ZXing...")
         codeReader
           .decodeFromVideoDevice(
-            selectedDevice.deviceId,
+            videoInputDevices[0].deviceId,
             videoRef.current,
             (result, err, controls) => {
               controlsRef.current = controls
 
-              if (!scanningRef.current) {
-                controls.stop()
-                return
-              }
+        if (!scanningRef.current) {
+          controls.stop()
+          return
+        }
 
-              if (result && result.getText()) {
-                const barcode = result.getText()
-                console.log("✓ Barcode detected:", barcode)
+        if (result?.getText()) {
+          const barcode = result.getText()
 
-                setDetectedBarcode({
-                  barcode,
-                  format: result.getBarcodeFormat(),
-                })
+          console.log("✓ Barcode detected:", barcode)
 
-                setFormData((prev) => ({
-                  ...prev,
-                  barcode,
-                }))
+          setDetectedBarcode({
+            barcode,
+            format: result.getBarcodeFormat(),
+          })
+
+          setFormData(prev => ({
+            ...prev,
+            barcode,
+          }))
 
                 scanningRef.current = false
                 controls.stop()
-
+                
+                // Auto-search product after barcode detected
                 setTimeout(() => {
                   handleAutoSearch(barcode, result.getBarcodeFormat())
                 }, 100)
@@ -125,12 +109,28 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
 
     initScanner()
 
-    return () => {
-      scanningRef.current = false
-      if (controlsRef.current) {
-        controlsRef.current.stop()
-      }
-    }
+return () => {
+  scanningRef.current = false
+
+  if (controlsRef.current) {
+    controlsRef.current.stop()
+    controlsRef.current = null
+  }
+
+  if (streamRef.current) {
+    streamRef.current.getTracks().forEach(track =>
+      track.stop()
+    )
+    streamRef.current = null
+  }
+
+  if (videoRef.current) {
+    videoRef.current.pause()
+    videoRef.current.srcObject = null
+  }
+
+  readerRef.current = null
+}
   }, [scanning])
 
   // ===============================
@@ -141,13 +141,36 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
     setScanning(true)
   }
 
-  const stopScan = () => {
-    scanningRef.current = false
-    if (controlsRef.current) {
-      controlsRef.current.stop()
-    }
-    setScanning(false)
+const stopScan = () => {
+  console.log("FULL CAMERA STOP")
+
+  scanningRef.current = false
+
+  // ✅ Stop ZXing decoder
+  if (controlsRef.current) {
+    controlsRef.current.stop()
+    controlsRef.current = null
   }
+
+  // ✅ Stop ALL media tracks
+  if (streamRef.current) {
+    streamRef.current.getTracks().forEach(track => {
+      track.stop()
+    })
+    streamRef.current = null
+  }
+
+  // ✅ Detach video completely
+  if (videoRef.current) {
+    videoRef.current.pause()
+    videoRef.current.srcObject = null
+  }
+
+  // ✅ Destroy ZXing instance
+  readerRef.current = null
+
+  setScanning(false)
+}
 
   const resetState = () => {
     setDetectedBarcode(null)
@@ -239,7 +262,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
         <div className="scanner-overlay">
           <div className="scanner-header">
             <h3>Scan Barcode</h3>
-            <button className="close-btn" onClick={stopScan}>
+            <button style={{ background: "white", color: "black", border: "1px solid #ccc" }} onClick={stopScan}>
               <X size={20} />
             </button>
           </div>
@@ -253,7 +276,7 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                objectFit: "contain",
                 background: "#000",
               }}
             />
@@ -275,12 +298,12 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
             {!scannerLoading && !error && (
               <div className="scanning-hint">
                 <p>Point camera at barcode</p>
-                <p className="hint-text">Position barcode in center</p>
+                <p className="hint-text">Position barcode in center of frame</p>
               </div>
             )}
           </div>
 
-          <button className="stop-btn" onClick={stopScan}>
+          <button className="stop-btn" style={{ background: "white", color: "black", border: "1px solid #ccc" }} onClick={stopScan}>
             Stop Scanning
           </button>
         </div>
