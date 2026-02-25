@@ -9,7 +9,6 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   const videoRef = useRef(null)
   const scanningRef = useRef(false)
   const controlsRef = useRef(null)
-  const readerRef = useRef(null)
   const streamRef = useRef(null)
 
   const [scanning, setScanning] = useState(false)
@@ -34,89 +33,117 @@ function ProductScanner({ onProductFound, onNewBarcodeScanned, mode = "billing" 
   // INIT SCANNER (BACK CAMERA LOGIC)
   // ===============================
   useEffect(() => {
-    if (!scanning) return
 
-    setScannerLoading(true)
-    setError(null)
-    scanningRef.current = true
+  console.log("Scanner effect start")
 
-    const initScanner = async () => {
-      try {
-        const codeReader = new BrowserMultiFormatReader()
-        const videoInputDevices =
-          await BrowserMultiFormatReader.listVideoInputDevices()
-
-    if (videoInputDevices.length === 0) {
-      throw new Error("No camera devices found")
-    }
-
-        console.log("Starting barcode scanning with ZXing...")
-        codeReader
-          .decodeFromVideoDevice(
-            videoInputDevices[0].deviceId,
-            videoRef.current,
-            (result, err, controls) => {
-              controlsRef.current = controls
-
-        if (!scanningRef.current) {
-          controls.stop()
-          return
-        }
-
-        if (result?.getText()) {
-          const barcode = result.getText()
-
-          console.log("✓ Barcode detected:", barcode)
-
-          setDetectedBarcode({
-            barcode,
-            format: result.getBarcodeFormat(),
-          })
-
-          setFormData(prev => ({
-            ...prev,
-            barcode,
-          }))
-
-                scanningRef.current = false
-                controls.stop()
-                
-                // Auto-search product after barcode detected
-                setTimeout(() => {
-                  handleAutoSearch(barcode, result.getBarcodeFormat())
-                }, 100)
-              }
-            }
-          )
-          .then(() => {
-            setScannerLoading(false)
-          })
-          .catch((err) => {
-            console.error("Camera/Scanning error:", err)
-            setError(
-              err.message.includes("Permission denied")
-                ? "Camera access denied. Please allow camera permissions."
-                : `Error: ${err.message}`
-            )
-            setScannerLoading(false)
-          })
-      } catch (err) {
-        console.error("Scanner initialization error:", err)
-        setError(err.message || "Failed to initialize scanner")
-        setScannerLoading(false)
-      }
-    }
-
-    initScanner()
-
-return () => {
-  scanningRef.current = false
-
+  // ⭐ kill previous instance FIRST
   if (controlsRef.current) {
     controlsRef.current.stop()
     controlsRef.current = null
   }
 
+  if (videoRef.current?.srcObject) {
+    videoRef.current.srcObject
+      .getTracks()
+      .forEach(t => t.stop())
+
+    videoRef.current.srcObject = null
+  }
+
+  if (!scanning) return
+
+    setScannerLoading(true)
+    setError(null)
+    scanningRef.current = true
+
+  const initScanner = async () => {
+  try {
+    const devices =
+      await BrowserMultiFormatReader.listVideoInputDevices()
+
+    const device =
+      devices.find(d =>
+        /back|rear|environment/i.test(d.label)
+      ) || devices[0]
+
+    // ✅ Manual camera control
+    const stream =
+      await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { exact: device.deviceId },
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          focusMode: "continuous"
+        }
+      })
+
+    streamRef.current = stream
+    videoRef.current.srcObject = stream
+
+    const track = stream.getVideoTracks()[0]
+    const caps = track.getCapabilities()
+
+    // ✅ FORCE AUTOFOCUS
+    if (caps.focusMode) {
+      await track.applyConstraints({
+        advanced: [{ focusMode: "continuous" }]
+      })
+    }
+
+    controlsRef.current = null
+    const codeReader = new BrowserMultiFormatReader()
+
+    codeReader.decodeFromVideoElement(
+  videoRef.current,
+  (result, err, controls) => {
+
+    controlsRef.current = controls
+
+    if (!scanningRef.current) {
+      controls.stop()
+      return
+    }
+
+    if (result?.getText()) {
+
+  scanningRef.current = false
+  controls.stop()
+
+  // ⭐ immediately release camera
+  if (streamRef.current) {
+    streamRef.current.getTracks().forEach(t => t.stop())
+    streamRef.current = null
+  }
+
+  handleAutoSearch(
+    result.getText(),
+    result.getBarcodeFormat()
+  )
+  }
+  }
+)
+
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+console.log("Calling initScanner")
+initScanner()
+
+ return () => {
+  console.log("Cleanup scanner")
+
+  scanningRef.current = false
+
+  // ✅ stop ZXing decoding
+  if (controlsRef.current) {
+    controlsRef.current.stop()
+    controlsRef.current = null
+  }
+
+  // ✅ stop camera tracks
   if (streamRef.current) {
     streamRef.current.getTracks().forEach(track =>
       track.stop()
@@ -124,12 +151,12 @@ return () => {
     streamRef.current = null
   }
 
+  // ✅ fully release video element
   if (videoRef.current) {
     videoRef.current.pause()
     videoRef.current.srcObject = null
+    videoRef.current.load()   // ⭐ IMPORTANT
   }
-
-  readerRef.current = null
 }
   }, [scanning])
 
@@ -142,32 +169,29 @@ return () => {
   }
 
 const stopScan = () => {
-  console.log("FULL CAMERA STOP")
+  console.log("STOP SCAN")
 
   scanningRef.current = false
 
-  // ✅ Stop ZXing decoder
+  // stop decoder
   if (controlsRef.current) {
     controlsRef.current.stop()
     controlsRef.current = null
   }
 
-  // ✅ Stop ALL media tracks
+  // stop camera
   if (streamRef.current) {
-    streamRef.current.getTracks().forEach(track => {
+    streamRef.current.getTracks().forEach(track =>
       track.stop()
-    })
+    )
     streamRef.current = null
   }
 
-  // ✅ Detach video completely
+  // detach video
   if (videoRef.current) {
     videoRef.current.pause()
     videoRef.current.srcObject = null
   }
-
-  // ✅ Destroy ZXing instance
-  readerRef.current = null
 
   setScanning(false)
 }
@@ -276,7 +300,7 @@ const stopScan = () => {
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "contain",
+                objectFit: "cover",
                 background: "#000",
               }}
             />
@@ -292,13 +316,6 @@ const stopScan = () => {
               <div className="error-state">
                 <AlertCircle size={24} />
                 <p>{error}</p>
-              </div>
-            )}
-
-            {!scannerLoading && !error && (
-              <div className="scanning-hint">
-                <p>Point camera at barcode</p>
-                <p className="hint-text">Position barcode in center of frame</p>
               </div>
             )}
           </div>

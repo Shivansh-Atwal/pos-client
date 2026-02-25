@@ -118,7 +118,6 @@
 .scanner-video-container {
   position: relative;
   width: 100%;
-  height: auto;
   aspect-ratio: 16 / 9;
   max-height: 400px;
   background: #000;
@@ -126,9 +125,6 @@
   margin-bottom: 20px;
   overflow: hidden;
   border: 2px solid #1f8dd6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .scanner-video-container video {
