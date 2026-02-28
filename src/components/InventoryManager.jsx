@@ -19,6 +19,8 @@ function InventoryManager() {
     lowStock: 0,
     outOfStock: 0,
   })
+  const [editingItemId, setEditingItemId] = useState(null)
+  const [editingValue, setEditingValue] = useState('')
 
   useEffect(() => {
     fetchInventory()
@@ -122,6 +124,28 @@ function InventoryManager() {
     } finally {
       setAdjusting(null)
     }
+  }
+
+  const startEdit = (itemId, currentValue) => {
+    setEditingItemId(itemId)
+    setEditingValue(currentValue.toString())
+  }
+
+  const saveEdit = async (itemId) => {
+    const newValue = parseInt(editingValue, 10)
+    if (isNaN(newValue) || newValue < 0) {
+      alert('Please enter a valid quantity')
+      return
+    }
+
+    await handleAdjustQuantity(itemId, newValue)
+    setEditingItemId(null)
+    setEditingValue('')
+  }
+
+  const cancelEdit = () => {
+    setEditingItemId(null)
+    setEditingValue('')
   }
 
   const handleDeleteSingle = async(itemId) =>{
@@ -291,23 +315,55 @@ function InventoryManager() {
                     </td>
                     <td>₹{item.price?.toFixed(2) || '0.00'}</td>
                     <td className="quantity-cell">
-                      <div className="quantity-control-inline">
-                        <button
-                          className="qty-btn-sm"
-                          onClick={() => handleAdjustQuantity(item._id, item.stock - 1)}
-                          disabled={adjusting === item._id || item.stock === 0}
-                        >
-                          -
-                        </button>
-                        <span className="qty-value-sm">{item.stock}</span>
-                        <button
-                          className="qty-btn-sm"
-                          onClick={() => handleAdjustQuantity(item._id, item.stock + 1)}
-                          disabled={adjusting === item._id}
-                        >
-                          +
-                        </button>
-                      </div>
+                      {editingItemId === item._id ? (
+                        <div className="quantity-edit-mode">
+                          <input
+                            type="number"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            autoFocus
+                            min="0"
+                          />
+                          <button
+                            className="edit-save-btn"
+                            onClick={() => saveEdit(item._id)}
+                            title="Save"
+                          >
+                            ✓
+                          </button>
+                          <button
+                            className="edit-cancel-btn"
+                            onClick={cancelEdit}
+                            title="Cancel"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="quantity-control-inline">
+                          <button
+                            className="qty-btn-sm"
+                            onClick={() => handleAdjustQuantity(item._id, item.stock - 1)}
+                            disabled={adjusting === item._id || item.stock === 0}
+                          >
+                            -
+                          </button>
+                          <span
+                            className="qty-value-sm editable"
+                            onClick={() => startEdit(item._id, item.stock)}
+                            title="Click to edit directly"
+                          >
+                            {item.stock}
+                          </span>
+                          <button
+                            className="qty-btn-sm"
+                            onClick={() => handleAdjustQuantity(item._id, item.stock + 1)}
+                            disabled={adjusting === item._id}
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td>
                       <button onClick = {()=> handleDeleteSingle(item._id)}>Delete</button>

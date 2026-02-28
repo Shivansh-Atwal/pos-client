@@ -1,6 +1,6 @@
 /* ========================================
-   Receipt-Style Authentication Pages
-   Bill/POS Receipt Design
+   Modern Authentication Pages
+   Modern POS Design
    ======================================== */
 
 * {
@@ -12,25 +12,141 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 16px;
-  font-family: 'Courier New', 'Lucida Console', monospace;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Login Container Specific */
+.login-container {
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 50%, #0d47a1 100%);
+}
+
+.login-background {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.login-background::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: -50px;
+  left: -150px;
+}
+
+/* Watermark Styles */
+.auth-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 150px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 10px;
+  user-select: none;
 }
 
 .auth-card {
+  position: relative;
+  z-index: 10;
   background: #ffffff;
-  padding: 0;
-  border: 2px dashed #333;
-  border-radius: 4px;
+  border-radius: 16px;
   width: 100%;
-  max-width: 320px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.3s ease-out;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  animation: slideUp 0.5s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.auth-card.signup-card {
-  max-width: 320px;
+.login-card {
+  max-width: 380px;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Login Header */
+.login-header {
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
+  padding: 40px 24px 32px;
+  text-align: center;
+  color: white;
+}
+
+.logo-circle {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 auto 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  animation: popIn 0.6s ease-out;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.login-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.login-header p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
+  letter-spacing: 0.3px;
 }
 
 @keyframes fadeIn {
@@ -66,159 +182,286 @@
   border-bottom: 1px dashed #ccc;
 }
 
-/* Receipt Content Section */
-form {
-  padding: 16px;
-}
-
-/* Error Message - Receipt Style */
-.error-message {
-  background-color: #fff5f5;
-  color: #8B0000;
-  padding: 10px 12px;
-  border: 1px dashed #8B0000;
-  border-radius: 2px;
-  margin-bottom: 16px;
-  font-size: 11px;
-  line-height: 1.4;
-  text-align: center;
-  font-family: 'Courier New', monospace;
-}
-
-/* Form Rows - Receipt Items */
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 0;
+/* Login Form Styles */
+.login-form {
+  padding: 32px 24px 24px;
 }
 
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+/* Input Wrapper with Icon */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.3s;
+  padding: 0 12px;
+}
+
+.input-wrapper:focus-within {
+  border-color: #1f8dd6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(31, 141, 214, 0.1);
+}
+
+.input-icon {
+  color: #999;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.input-wrapper input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 12px 10px;
+  font-size: 14px;
+  color: #333;
+  font-family: inherit;
+}
+
+.input-wrapper input::placeholder {
+  color: #999;
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toggle-password:hover {
+  color: #1f8dd6;
+}
+
+/* Error Message - Modern Style */
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  border-left: 4px solid #c62828;
+  animation: slideDown 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Login Button */
+.login-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(31, 141, 214, 0.4);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Login Footer */
+.login-footer {
+  padding: 20px 24px;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.login-footer p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #1f8dd6;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  color: #1565a0;
+  text-decoration: underline;
+}
+
+/* Form Rows - for Signup */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 0;
 }
 
 .form-row .form-group {
   margin-bottom: 0;
 }
 
-/* Form Labels - Receipt Style */
-.form-group label {
-  display: block;
-  margin-bottom: 4px;
-  color: #333;
-  font-weight: bold;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-family: 'Courier New', monospace;
-}
-
-/* Form Inputs - Receipt Style */
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #999;
-  border-radius: 2px;
-  font-size: 12px;
-  font-family: 'Courier New', monospace;
-  background-color: #ffffff;
-  color: #333;
-  transition: all 0.2s ease;
-}
-
-.form-group input::placeholder,
-.form-group select::placeholder {
-  color: #aaa;
-  font-size: 11px;
-}
-
 .form-group input:hover,
 .form-group select:hover {
-  border-color: #666;
-  background-color: #fafafa;
+  border-color: #e0e0e0;
+  background-color: white;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border: 1px solid #333;
-  background-color: #f9f9f9;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+  border-color: #1f8dd6;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(31, 141, 214, 0.1);
 }
 
 .form-group input:disabled,
 .form-group select:disabled {
-  background-color: #f5f5f5;
+  background-color: #fafafa;
   color: #999;
   cursor: not-allowed;
-  border-color: #ddd;
+  border-color: #e0e0e0;
 }
 
-/* Receipt Footer - Submit Button */
+/* Auth Button - Generic */
 .auth-btn {
   width: 100%;
-  padding: 10px;
-  background-color: #333;
-  color: #fff;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
+  color: white;
   border: none;
-  border-radius: 2px;
-  font-size: 12px;
-  font-weight: bold;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
   margin-top: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-family: 'Courier New', monospace;
+  position: relative;
+  overflow: hidden;
 }
 
 .auth-btn:hover:not(:disabled) {
-  background-color: #000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(31, 141, 214, 0.4);
 }
 
 .auth-btn:active:not(:disabled) {
-  background-color: #1a1a1a;
+  transform: translateY(0);
 }
 
 .auth-btn:disabled {
-  background-color: #999;
+  opacity: 0.7;
   cursor: not-allowed;
-  opacity: 0.8;
 }
 
-/* Receipt Footer Section - Links */
+/* Auth Footer  */
 .auth-footer {
   text-align: center;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 2px dashed #999;
   color: #666;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
-  font-family: 'Courier New', monospace;
 }
 
 .link-btn {
   background: none;
   border: none;
-  color: #000;
-  font-weight: bold;
+  color: #1f8dd6;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
   padding: 0;
-  font-size: 11px;
-  transition: color 0.2s ease;
-  text-decoration: underline;
-  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-decoration: none;
 }
 
 .link-btn:hover {
-  color: #333;
-}
-
-.link-btn:active {
-  color: #000;
+  color: #1565a0;
+  text-decoration: underline;
 }
 
 /* ========================================
@@ -230,65 +473,82 @@ form {
     padding: 12px;
   }
 
+  .login-container {
+    padding: 12px;
+  }
+
+  .auth-watermark {
+    font-size: 80px;
+  }
+
   .auth-card {
     max-width: 100%;
-    border-width: 2px;
   }
 
-  .auth-card h1 {
-    font-size: 16px;
-    padding: 14px 14px 8px;
+  .login-card {
+    max-width: 100%;
   }
 
-  .auth-card p {
-    padding: 8px 14px;
-    font-size: 10px;
+  .login-header {
+    padding: 32px 20px 24px;
   }
 
-  form {
-    padding: 14px;
+  .logo-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 0;
+  .login-header h1 {
+    font-size: 28px;
+  }
+
+  .login-header p {
+    font-size: 12px;
+  }
+
+  .login-form {
+    padding: 24px 20px 20px;
   }
 
   .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
   }
 
   .form-group label {
-    font-size: 9px;
-    margin-bottom: 3px;
+    font-size: 12px;
   }
 
-  .form-group input,
-  .form-group select {
-    padding: 9px 9px;
+  .input-wrapper {
+    padding: 0 10px;
+  }
+
+  .input-wrapper input {
+    padding: 10px 8px;
     font-size: 13px;
   }
 
-  .auth-btn {
-    padding: 10px;
-    font-size: 11px;
-    margin-top: 6px;
+  .login-btn {
+    padding: 11px 20px;
+    font-size: 13px;
   }
 
   .error-message {
-    font-size: 10px;
-    padding: 9px 11px;
-    margin-bottom: 14px;
+    font-size: 12px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
   }
 
-  .auth-footer {
-    font-size: 10px;
-    margin-top: 14px;
-    padding-top: 10px;
+  .login-footer {
+    padding: 16px 20px;
+  }
+
+  .login-footer p {
+    font-size: 12px;
   }
 
   .link-btn {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 
@@ -643,6 +903,82 @@ form {
 
 .logout-btn-profile:active {
   transform: translateY(0);
+}
+
+/* Sales Report Button in Profile */
+.sales-report-btn-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #1f8dd6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.sales-report-btn-profile:hover {
+  background-color: #1565a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 141, 214, 0.3);
+}
+
+.sales-report-btn-profile:active {
+  transform: translateY(0);
+}
+
+/* Sales Report Modal Wrapper */
+.sales-report-modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f5f5;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sales-report-modal-header {
+  background: white;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #e0e0e0;
+  color: #1f8dd6;
+}
+
+.sales-report-modal-wrapper > div:last-child {
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Responsive Design */

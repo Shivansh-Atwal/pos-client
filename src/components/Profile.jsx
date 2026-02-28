@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { X, LogOut, Save } from 'lucide-react'
+import { X, LogOut, Save, BarChart3 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import SalesReport from './SalesReport'
 import './Auth.css'
 
 function Profile({ isOpen, onClose, onLogout }) {
   const { user, updateUser } = useAuth()
+  const [showSalesReport, setShowSalesReport] = useState(false)
   const [formData, setFormData] = useState({
     shopName: '',
     shopAddress: '',
@@ -77,6 +79,24 @@ function Profile({ isOpen, onClose, onLogout }) {
   }
 
   if (!isOpen) return null
+
+  // If showing sales report, display it in fullscreen
+  if (showSalesReport) {
+    return (
+      <div className="sales-report-modal-wrapper">
+        <div className="sales-report-modal-header">
+          <button 
+            className="back-btn"
+            onClick={() => setShowSalesReport(false)}
+            title="Back to Profile"
+          >
+            ← Back to Profile
+          </button>
+        </div>
+        <SalesReport />
+      </div>
+    )
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -203,6 +223,14 @@ function Profile({ isOpen, onClose, onLogout }) {
           {/* Logout Section */}
           <div className="logout-section">
             <hr className="divider" />
+            <button 
+              className="sales-report-btn-profile" 
+              onClick={() => setShowSalesReport(true)}
+              title="View sales report"
+            >
+              <BarChart3 size={18} />
+              <span>View Sales Report</span>
+            </button>
             <button className="logout-btn-profile" onClick={onLogout}>
               <LogOut size={18} />
               <span>Logout</span>

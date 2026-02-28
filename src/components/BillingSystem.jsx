@@ -111,10 +111,12 @@ function BillingSystem() {
     return billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   }
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchQuery.toLowerCase())
-  ).slice(0, 5)
+  const filteredProducts = products.filter(p => {
+    const searchLower = searchQuery.toLowerCase()
+    const nameMatch = p.name && p.name.toLowerCase().includes(searchLower)
+    const categoryMatch = p.category && p.category.toLowerCase().includes(searchLower)
+    return nameMatch || categoryMatch
+  })
 
   const total = calculateTotal()
 
@@ -465,8 +467,8 @@ function BillingSystem() {
     </thead>
 
     <tbody>
-      {products.length > 0 ? (
-        products.map((product) => {
+      {filteredProducts.length > 0 ? (
+        filteredProducts.map((product) => {
 
           // support both formatted and raw inventory data
           const id = product.id || product._id || product.productId?._id
@@ -513,7 +515,7 @@ function BillingSystem() {
       ) : (
         <tr>
           <td colSpan="3" style={{ textAlign: 'center' }}>
-            No products available
+            {searchQuery ? 'No products found matching your search' : 'No products available'}
           </td>
         </tr>
       )}

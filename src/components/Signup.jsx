@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+import { Store, Mail, Lock, Phone, Eye, EyeOff } from 'lucide-react'
 import './Auth.css'
 
 function Signup({ onSignupSuccess, onNavigateToLogin }) {
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -81,120 +84,169 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card signup-card">
-        <h1>sPOS</h1>
-        <p>CREATE NEW ACCOUNT</p>
+    <div className="auth-container login-container">
+      <div className="auth-watermark">sPOS</div>
+      <div className="login-background"></div>
+      
+      <div className="auth-card login-card">
+        <div className="login-header">
+          <div className="logo-circle">
+            <Store size={32} />
+          </div>
+          <h1>sPOS</h1>
+          <p>Create Your Account</p>
+        </div>
         
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message"><span>⚠</span> {error}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="shopName">Shop Name</label>
-              <input
-                id="shopName"
-                type="text"
-                name="shopName"
-                value={formData.shopName}
-                onChange={handleChange}
-                placeholder="Your shop name"
-                required
-                disabled={loading}
-              />
+              <div className="input-wrapper">
+                <Store size={18} className="input-icon" />
+                <input
+                  id="shopName"
+                  type="text"
+                  name="shopName"
+                  value={formData.shopName}
+                  onChange={handleChange}
+                  placeholder="Your shop name"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="username">Username</label>
-              <input
-                id="username"
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Choose username"
-                required
-                disabled={loading}
-                autoComplete="username"
-              />
+              <div className="input-wrapper">
+                <Mail size={18} className="input-icon" />
+                <input
+                  id="username"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Choose username"
+                  required
+                  disabled={loading}
+                  autoComplete="username"
+                />
+              </div>
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your@email.com"
-                required
-                disabled={loading}
-                autoComplete="email"
-              />
+              <div className="input-wrapper">
+                <Mail size={18} className="input-icon" />
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="your@email.com"
+                  required
+                  disabled={loading}
+                  autoComplete="email"
+                />
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="phone">Phone</label>
-              <input
-                id="phone"
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Your phone number"
-                disabled={loading}
-                autoComplete="tel"
-              />
+              <div className="input-wrapper">
+                <Phone size={18} className="input-icon" />
+                <input
+                  id="phone"
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Your phone number"
+                  disabled={loading}
+                  autoComplete="tel"
+                />
+              </div>
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="At least 6 characters"
-                required
-                disabled={loading}
-                autoComplete="new-password"
-              />
+              <div className="input-wrapper">
+                <Lock size={18} className="input-icon" />
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="At least 6 characters"
+                  required
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex="-1"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm password"
-                required
-                disabled={loading}
-                autoComplete="new-password"
-              />
+              <div className="input-wrapper">
+                <Lock size={18} className="input-icon" />
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm password"
+                  required
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  tabIndex="-1"
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
           </div>
 
           <button 
             type="submit" 
-            className="auth-btn"
+            className="auth-btn login-btn"
             disabled={loading}
           >
-            {loading ? 'PROCESSING...' : 'REGISTER ACCOUNT'}
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                PROCESSING...
+              </>
+            ) : (
+              'REGISTER ACCOUNT'
+            )}
           </button>
         </form>
 
-        <p className="auth-footer">
-          Already have an account? <button onClick={onNavigateToLogin} className="link-btn">Sign in</button>
-        </p>
+        <div className="login-footer">
+          <p>Already have an account? <button onClick={onNavigateToLogin} className="link-btn">Sign in</button></p>
+        </div>
       </div>
     </div>
   )
