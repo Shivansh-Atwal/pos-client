@@ -1,6 +1,6 @@
 /* ========================================
-   Modern Authentication Pages
-   Modern POS Design
+   Bill-Style Authentication Pages
+   Receipt/Invoice Inspired Design
    ======================================== */
 
 * {
@@ -12,49 +12,35 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
   padding: 16px;
   position: relative;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Login Container Specific */
-.login-container {
-  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 50%, #0d47a1 100%);
+/* Bill Auth Container */
+.bill-auth-container {
+  background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);
 }
 
 .login-background {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  top: -100px;
-  right: -100px;
-  pointer-events: none;
+  display: none;
 }
 
 .login-background::after {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  bottom: -50px;
-  left: -150px;
+  display: none;
 }
 
 /* Watermark Styles */
-.auth-watermark {
+.bill-watermark {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-45deg);
   font-size: 150px;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.05);
+  color: rgba(0, 0, 0, 0.03);
   white-space: nowrap;
   pointer-events: none;
   z-index: 0;
@@ -62,21 +48,39 @@
   user-select: none;
 }
 
-.auth-card {
+.auth-watermark {
+  display: none;
+}
+
+.bill-card {
   position: relative;
   z-index: 10;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 4px;
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   animation: slideUp 0.5s ease-out;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #ddd;
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  line-height: 1.6;
+}
+
+.login-bill-card {
+  max-width: 420px;
+}
+
+.signup-bill-card {
+  max-width: 520px;
+}
+
+.auth-card {
+  display: none;
 }
 
 .login-card {
-  max-width: 380px;
+  display: none;
 }
 
 @keyframes slideUp {
@@ -99,27 +103,27 @@
   }
 }
 
-/* Login Header */
-.login-header {
-  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
-  padding: 40px 24px 32px;
+/* ===== BILL RECEIPT HEADER ===== */
+.bill-receipt-header {
+  background: #ffffff;
+  padding: 24px 20px 16px;
   text-align: center;
-  color: white;
+  border-bottom: 2px dashed #333;
+  position: relative;
 }
 
-.logo-circle {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
+.receipt-logo {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  margin: 0 auto 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+  margin: 0 auto 12px;
+  color: white;
   animation: popIn 0.6s ease-out;
 }
 
@@ -135,18 +139,42 @@
   }
 }
 
-.login-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 32px;
+.receipt-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: 1.5px;
+  color: #000;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
 }
 
-.login-header p {
+.receipt-subtitle {
   margin: 0;
-  font-size: 13px;
-  opacity: 0.9;
-  letter-spacing: 0.3px;
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+.receipt-line {
+  margin: 12px 0 0 0;
+  border: none;
+  border-top: 1px dashed #333;
+  height: 0;
+}
+
+.receipt-line.dashed {
+  border-top: 1px dashed #999;
+  margin: 12px 0;
+}
+
+.login-header {
+  display: none;
+}
+
+.logo-circle {
+  display: none;
 }
 
 @keyframes fadeIn {
@@ -158,86 +186,93 @@
   }
 }
 
-/* Receipt Header Section */
-.auth-card h1 {
-  text-align: center;
-  color: #000;
-  margin: 0;
-  padding: 16px 16px 8px;
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 2px;
+/* ===== BILL FORM STYLES ===== */
+.bill-form {
+  padding: 16px 20px;
+}
+
+.bill-form-section {
+  margin-bottom: 0;
+}
+
+.bill-form-group {
+  margin-bottom: 14px;
+  padding-bottom: 0;
+}
+
+.bill-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.bill-field-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 2px dashed #999;
   font-family: 'Courier New', monospace;
 }
 
-.auth-card p {
-  text-align: center;
-  color: #666;
-  margin: 0;
-  padding: 8px 16px;
-  font-size: 11px;
-  line-height: 1.4;
-  border-bottom: 1px dashed #ccc;
-}
-
-/* Login Form Styles */
-.login-form {
-  padding: 32px 24px 24px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.3px;
-}
-
-/* Input Wrapper with Icon */
-.input-wrapper {
+.bill-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #f8f9fa;
+  border: 1px solid #333;
+  border-radius: 0;
+  background: #ffffff;
   transition: all 0.3s;
-  padding: 0 12px;
+  padding: 0;
 }
 
-.input-wrapper:focus-within {
+.bill-input-wrapper:focus-within {
   border-color: #1f8dd6;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(31, 141, 214, 0.1);
+  background: #f9f9f9;
+  box-shadow: 0 0 0 2px rgba(31, 141, 214, 0.1);
 }
 
-.input-icon {
-  color: #999;
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-}
-
-.input-wrapper input {
+.bill-input {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  padding: 12px 10px;
-  font-size: 14px;
+  padding: 8px 10px;
+  font-size: 12px;
   color: #333;
-  font-family: inherit;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.3px;
 }
 
-.input-wrapper input::placeholder {
+.bill-input::placeholder {
   color: #999;
+  font-size: 11px;
+}
+
+.bill-input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+.login-form {
+  display: none;
+}
+
+.form-group {
+  display: none;
+}
+
+.form-group label {
+  display: none;
+}
+
+/* Input Wrapper with Icon */
+.input-wrapper {
+  display: none;
+}
+
+.input-icon {
+  display: none;
 }
 
 .toggle-password {
@@ -256,22 +291,27 @@
   color: #1f8dd6;
 }
 
-/* Error Message - Modern Style */
-.error-message {
-  background-color: #ffebee;
+/* Error Message */
+.bill-error-message {
+  background-color: #ffe0e0;
   color: #c62828;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 13px;
-  line-height: 1.5;
+  padding: 10px 12px;
+  border: 1px solid #ff9999;
+  margin-bottom: 12px;
+  font-size: 11px;
+  line-height: 1.4;
   text-align: center;
-  border-left: 4px solid #c62828;
   animation: slideDown 0.3s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  font-family: 'Courier New', monospace;
+  border-radius: 2px;
+}
+
+.error-message {
+  display: none;
 }
 
 @keyframes slideDown {
@@ -285,39 +325,46 @@
   }
 }
 
-/* Login Button */
-.login-btn {
+/* Bill Submit Button */
+.bill-submit-btn {
   width: 100%;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #1f8dd6 0%, #1565a0 100%);
+  padding: 10px 12px;
+  background: #1f8dd6;
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border: 1px solid #1565a0;
+  border-radius: 0;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  letter-spacing: 0.5px;
+  gap: 6px;
+  font-family: 'Courier New', monospace;
   position: relative;
   overflow: hidden;
+  margin: 12px 0;
 }
 
-.login-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(31, 141, 214, 0.4);
+.bill-submit-btn:hover:not(:disabled) {
+  background: #1565a0;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.login-btn:active:not(:disabled) {
-  transform: translateY(0);
+.bill-submit-btn:active:not(:disabled) {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.login-btn:disabled {
-  opacity: 0.7;
+.bill-submit-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
+}
+
+.login-btn {
+  display: none;
 }
 
 .spinner {
@@ -336,18 +383,54 @@
   }
 }
 
-/* Login Footer */
-.login-footer {
-  padding: 20px 24px;
+/* ===== BILL RECEIPT FOOTER ===== */
+.bill-receipt-footer {
+  padding: 12px 20px 20px;
   text-align: center;
-  border-top: 1px solid #f0f0f0;
-  background: #fafafa;
+  background: #ffffff;
+  border-top: 1px dashed #999;
 }
 
-.login-footer p {
+.bill-receipt-footer .receipt-line {
+  margin: 8px 0;
+}
+
+.receipt-footer-text {
   margin: 0;
-  font-size: 13px;
-  color: #666;
+  font-size: 11px;
+  color: #555;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+}
+
+.receipt-footer-text.footer-small {
+  font-size: 10px;
+  color: #888;
+  margin-top: 6px;
+}
+
+.bill-footer-link {
+  background: none;
+  border: none;
+  color: #1f8dd6;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  font-size: 11px;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.3px;
+}
+
+.bill-footer-link:hover {
+  color: #1565a0;
+  text-decoration: underline;
+}
+
+.login-footer {
+  display: none;
 }
 
 .link-btn {
@@ -369,14 +452,7 @@
 
 /* Form Rows - for Signup */
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 0;
-}
-
-.form-row .form-group {
-  margin-bottom: 0;
+  display: none;
 }
 
 .form-group input:hover,
@@ -604,6 +680,185 @@
 @media print {
   .auth-container {
     display: none;
+  }
+}
+
+/* ===== BILL FORM FOOTER ===== */
+.bill-form-footer {
+  margin: 12px 0;
+  padding: 0;
+}
+
+/* ===== SIGNUP FORM SPECIFIC ===== */
+.signup-form .bill-form-group {
+  margin-bottom: 12px;
+}
+
+/* ========================================
+   Mobile Responsive Design
+   ======================================== */
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 12px;
+  }
+
+  .bill-watermark {
+    font-size: 80px;
+  }
+
+  .bill-card {
+    max-width: 100%;
+    border-radius: 2px;
+  }
+
+  .login-bill-card {
+    max-width: 100%;
+  }
+
+  .signup-bill-card {
+    max-width: 100%;
+  }
+
+  .bill-receipt-header {
+    padding: 20px 16px 12px;
+  }
+
+  .receipt-logo {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .receipt-title {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .receipt-subtitle {
+    font-size: 10px;
+  }
+
+  .bill-form {
+    padding: 12px 16px;
+  }
+
+  .bill-form-group {
+    margin-bottom: 10px;
+  }
+
+  .bill-field-label {
+    font-size: 9px;
+  }
+
+  .bill-input {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .bill-input::placeholder {
+    font-size: 10px;
+  }
+
+  .bill-input-wrapper {
+    border: 1px solid #333;
+  }
+
+  .bill-submit-btn {
+    padding: 9px 10px;
+    font-size: 10px;
+    margin: 10px 0;
+  }
+
+  .bill-error-message {
+    font-size: 10px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .bill-receipt-footer {
+    padding: 10px 16px 16px;
+  }
+
+  .receipt-footer-text {
+    font-size: 10px;
+  }
+
+  .receipt-footer-text.footer-small {
+    font-size: 9px;
+  }
+
+  .bill-footer-link {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .bill-card {
+    border-radius: 0;
+  }
+
+  .bill-receipt-header {
+    padding: 16px 12px 10px;
+  }
+
+  .receipt-logo {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .receipt-title {
+    font-size: 12px;
+    letter-spacing: 0.8px;
+  }
+
+  .receipt-subtitle {
+    font-size: 9px;
+  }
+
+  .bill-form {
+    padding: 10px 12px;
+  }
+
+  .bill-form-group {
+    margin-bottom: 8px;
+  }
+
+  .bill-field-label {
+    font-size: 8px;
+  }
+
+  .bill-input {
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .bill-input::placeholder {
+    font-size: 9px;
+  }
+
+  .bill-submit-btn {
+    padding: 8px 8px;
+    font-size: 9px;
+    margin: 8px 0;
+  }
+
+  .bill-error-message {
+    font-size: 9px;
+    padding: 6px 8px;
+  }
+
+  .bill-receipt-footer {
+    padding: 8px 12px 12px;
+  }
+
+  .receipt-footer-text {
+    font-size: 9px;
+  }
+
+  .receipt-footer-text.footer-small {
+    font-size: 8px;
   }
 }
 

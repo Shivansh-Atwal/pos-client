@@ -84,64 +84,62 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
   }
 
   return (
-    <div className="auth-container login-container">
-      <div className="auth-watermark">sPOS</div>
-      <div className="login-background"></div>
+    <div className="auth-container bill-auth-container">
+      <div className="bill-watermark">sPOS</div>
       
-      <div className="auth-card login-card">
-        <div className="login-header">
-          <div className="logo-circle">
-            <Store size={32} />
+      <div className="bill-card signup-bill-card">
+        {/* Bill Header */}
+        <div className="bill-receipt-header">
+          <div className="receipt-logo">
+            <span>sPOS</span>
           </div>
-          <h1>sPOS</h1>
-          <p>Create Your Account</p>
+          <h1 className="receipt-title">ACCOUNT REGISTRATION</h1>
+          <div className="receipt-line"></div>
         </div>
         
-        {error && <div className="error-message"><span>⚠</span> {error}</div>}
+        {error && <div className="bill-error-message"><span>⚠</span> {error}</div>}
         
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="shopName">Shop Name</label>
-              <div className="input-wrapper">
-                <Store size={18} className="input-icon" />
+        <form onSubmit={handleSubmit} className="bill-form signup-form">
+          {/* Form Fields as Bill Items */}
+          <div className="bill-form-section">
+            <div className="bill-form-group">
+              <label className="bill-field-label">SHOP NAME</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="shopName"
                   type="text"
                   name="shopName"
                   value={formData.shopName}
                   onChange={handleChange}
-                  placeholder="Your shop name"
+                  placeholder="Your shop/business name"
                   required
                   disabled={loading}
+                  className="bill-input"
                 />
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <div className="input-wrapper">
-                <Mail size={18} className="input-icon" />
+            <div className="bill-form-group">
+              <label className="bill-field-label">USERNAME</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="username"
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  placeholder="Choose username"
+                  placeholder="Choose a username"
                   required
                   disabled={loading}
                   autoComplete="username"
+                  className="bill-input"
                 />
               </div>
             </div>
-          </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <div className="input-wrapper">
-                <Mail size={18} className="input-icon" />
+            <div className="bill-form-group">
+              <label className="bill-field-label">EMAIL</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="email"
                   type="email"
@@ -152,43 +150,42 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
                   required
                   disabled={loading}
                   autoComplete="email"
+                  className="bill-input"
                 />
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="phone">Phone</label>
-              <div className="input-wrapper">
-                <Phone size={18} className="input-icon" />
+            <div className="bill-form-group">
+              <label className="bill-field-label">PHONE NUMBER</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="phone"
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Your phone number"
+                  placeholder="10-digit phone number"
                   disabled={loading}
                   autoComplete="tel"
+                  className="bill-input"
                 />
               </div>
             </div>
-          </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <div className="input-wrapper">
-                <Lock size={18} className="input-icon" />
+            <div className="bill-form-group">
+              <label className="bill-field-label">PASSWORD</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="At least 6 characters"
+                  placeholder="Minimum 6 characters"
                   required
                   disabled={loading}
                   autoComplete="new-password"
+                  className="bill-input"
                 />
                 <button
                   type="button"
@@ -201,20 +198,20 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <div className="input-wrapper">
-                <Lock size={18} className="input-icon" />
+            <div className="bill-form-group">
+              <label className="bill-field-label">CONFIRM PASSWORD</label>
+              <div className="bill-input-wrapper">
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Confirm password"
+                  placeholder="Re-enter password"
                   required
                   disabled={loading}
                   autoComplete="new-password"
+                  className="bill-input"
                 />
                 <button
                   type="button"
@@ -228,9 +225,14 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
             </div>
           </div>
 
+          {/* Bill Footer Total Section */}
+          <div className="bill-form-footer">
+            <div className="receipt-line dashed"></div>
+          </div>
+
           <button 
             type="submit" 
-            className="auth-btn login-btn"
+            className="bill-submit-btn"
             disabled={loading}
           >
             {loading ? (
@@ -239,13 +241,18 @@ function Signup({ onSignupSuccess, onNavigateToLogin }) {
                 PROCESSING...
               </>
             ) : (
-              'REGISTER ACCOUNT'
+              'REGISTER ACCOUNT >'
             )}
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>Already have an account? <button onClick={onNavigateToLogin} className="link-btn">Sign in</button></p>
+        {/* Bill Footer */}
+        <div className="bill-receipt-footer">
+          <p className="receipt-line dashed"></p>
+          <p className="receipt-footer-text">
+            <button onClick={onNavigateToLogin} className="bill-footer-link">← Already have an account? Sign In</button>
+          </p>
+          <p className="receipt-footer-text footer-small">Welcome to sPOS System</p>
         </div>
       </div>
     </div>

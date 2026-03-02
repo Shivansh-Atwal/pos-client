@@ -47,68 +47,76 @@ function Login({ onLoginSuccess, onNavigateToSignup }) {
   }
 
   return (
-    <div className="auth-container login-container">
-      <div className="auth-watermark">sPOS</div>
-      <div className="login-background"></div>
+    <div className="auth-container bill-auth-container">
+      <div className="bill-watermark">sPOS</div>
       
-      <div className="auth-card login-card">
-        <div className="login-header">
-          <div className="logo-circle">
-            <span>sP</span>
+      <div className="bill-card login-bill-card">
+        {/* Bill Header */}
+        <div className="bill-receipt-header">
+          <div className="receipt-logo">
+            <span>sPOS</span>
           </div>
-          <h1>sPOS</h1>
-          <p>Smart Point of Sale System</p>
+          <h1 className="receipt-title">LOGIN ACCESS</h1>
+          <div className="receipt-line"></div>
         </div>
         
-        {error && <div className="error-message"><span>⚠</span> {error}</div>}
+        {error && <div className="bill-error-message"><span>⚠</span> {error}</div>}
         
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <div className="input-wrapper">
-              <Mail size={18} className="input-icon" />
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                required
-                disabled={loading}
-                autoComplete="username"
-              />
+        <form onSubmit={handleSubmit} className="bill-form">
+          {/* Form Fields as Bill Items */}
+          <div className="bill-form-section">
+            <div className="bill-form-group">
+              <label className="bill-field-label">USERNAME</label>
+              <div className="bill-input-wrapper">
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  required
+                  disabled={loading}
+                  autoComplete="username"
+                  className="bill-input"
+                />
+              </div>
+            </div>
+
+            <div className="bill-form-group">
+              <label className="bill-field-label">PASSWORD</label>
+              <div className="bill-input-wrapper">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  required
+                  disabled={loading}
+                  autoComplete="current-password"
+                  className="bill-input"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex="-1"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <div className="input-wrapper">
-              <Lock size={18} className="input-icon" />
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                disabled={loading}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex="-1"
-                title={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
+          {/* Bill Footer Total Section */}
+          <div className="bill-form-footer">
+            <div className="receipt-line dashed"></div>
           </div>
 
           <button 
             type="submit" 
-            className="auth-btn login-btn"
+            className="bill-submit-btn"
             disabled={loading}
           >
             {loading ? (
@@ -117,13 +125,18 @@ function Login({ onLoginSuccess, onNavigateToSignup }) {
                 PROCESSING...
               </>
             ) : (
-              'LOGIN'
+              'ACCESSING ACCOUNT >'
             )}
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>Don't have an account? <button onClick={onNavigateToSignup} className="link-btn">Sign up</button></p>
+        {/* Bill Footer */}
+        <div className="bill-receipt-footer">
+          <p className="receipt-line dashed"></p>
+          <p className="receipt-footer-text">
+            <button onClick={onNavigateToSignup} className="bill-footer-link">Create New Account →</button>
+          </p>
+          <p className="receipt-footer-text footer-small">Thank you for using sPOS</p>
         </div>
       </div>
     </div>
