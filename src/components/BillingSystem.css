@@ -180,21 +180,22 @@
   flex-shrink: 0;
   z-index: 10;
   position: relative;
-  animation: slideDown 0.3s ease-out forwards;
-  max-height: 100%;
+  animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   overflow: visible;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
     max-height: 0;
+    transform: translateY(-15px);
+    padding: 0 15px;
   }
   to {
     opacity: 1;
+    max-height: 600px;
     transform: translateY(0);
-    max-height: 500px;
+    padding: 15px;
   }
 }
 
@@ -206,9 +207,10 @@
 
 .manual-form h3 {
   margin: 0 0 10px 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #333;
+  display: block;
 }
 
 .form-group {
@@ -252,18 +254,22 @@
   display: flex;
   gap: 8px;
   margin-top: 8px;
+  width: 100%;
 }
 
 .btn-add-form,
 .btn-cancel-form {
   flex: 1;
-  padding: 10px;
+  padding: 12px 16px;
   border: none;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-add-form {
@@ -273,6 +279,7 @@
 
 .btn-add-form:hover {
   background: #218838;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
 }
 
 .btn-cancel-form {
