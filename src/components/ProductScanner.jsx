@@ -244,6 +244,7 @@ const stopScan = () => {
       } else {
         if (onNewBarcodeScanned) {
           onNewBarcodeScanned(barcode)
+          resetState() // Reset ProductScanner state after calling callback
         } else {
           setDetectedBarcode({ barcode, format })
           setShowManualForm(true)
@@ -254,6 +255,7 @@ const stopScan = () => {
       console.error("Search error:", err)
       if (onNewBarcodeScanned) {
         onNewBarcodeScanned(barcode)
+        resetState() // Reset ProductScanner state after calling callback
       } else {
         setDetectedBarcode({ barcode, format })
         setShowManualForm(true)

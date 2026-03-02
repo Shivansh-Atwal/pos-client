@@ -10,9 +10,9 @@ import InventoryManager from './InventoryManager'
 import { useAuth } from '../context/AuthContext'
 import './BillingSystem.css'
 
-function BillingSystem() {
+function BillingSystem({ defaultTab = 'billing' }) {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState('billing')
+  const [activeTab, setActiveTab] = useState(defaultTab)
   const [billItems, setBillItems] = useState([])
   const [showPayment, setShowPayment] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
