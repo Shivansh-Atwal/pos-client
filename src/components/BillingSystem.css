@@ -58,15 +58,13 @@
   overflow: hidden;
 }
 
-/* Product Panel */
 .products-panel {
   display: flex;
   flex-direction: column;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   min-width: 0;
 }
 
@@ -82,7 +80,6 @@
   font-weight: 600;
   color: #333;
 }
-
 /* Search Section */
 .search-section {
   padding: 16px;
